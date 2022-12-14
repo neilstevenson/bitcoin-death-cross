@@ -3,6 +3,7 @@ target/
 .settings/
 .classpath
 .directory
+.factorypath
 .project
 .surefire-*
 .DS_Store
@@ -13,3 +14,4 @@ target/
 node_modules/
 local-docs/
 package-lock.json
+**/dependency-reduced-pom.xml

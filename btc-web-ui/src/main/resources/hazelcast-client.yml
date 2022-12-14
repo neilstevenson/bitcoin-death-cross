@@ -1,0 +1,28 @@
+hazelcast-client:
+  cluster-name: '@viridian.cluster.name@'
+  instance-name: '@project.artifactId@'
+  client-labels:
+    - '@maven.build.timestamp@'
+  properties:
+    hazelcast.client.cloud.url: 'https://api.viridian.hazelcast.com'
+  #
+  network:  
+    ssl:
+      enabled: true
+      properties:
+        keyStore: '/client.keystore'
+        keyStorePassword: '@viridian.cluster.keys.keystore.password@'  
+        trustStore: '/client.truststore'
+        trustStorePassword: '@viridian.cluster.keys.truststore.password@'
+    #
+    hazelcast-cloud:
+      enabled: true
+      discovery-token: '@viridian.cluster.discovery.token@'
+  #
+  connection-strategy:
+    reconnect-mode: OFF
+    connection-retry:
+      cluster-connect-timeout-millis: 10000
+  #      
+  metrics:
+    enabled: true       
