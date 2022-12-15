@@ -90,6 +90,9 @@ public class ApplicationRunner2 implements CommandLineRunner {
 		new TreeMap<>(results).entrySet().forEach(entry -> {
 			LOGGER.info("'{}', wrote '{}'", entry.getKey(), entry.getValue());
 		});
+		
+		LOGGER.info("Shutting down Hazelcast client");
+		this.hazelcastInstance.shutdown();
 	}
 
 	/**

@@ -1,3 +1,4 @@
 node_modules
+perspective.worker.js
 static
 *.wasm

@@ -9,7 +9,7 @@ body {
 	background: Black;
 }
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5, h6 {
 	text-align: center;
 	color: var(--hazelcast-blue-light);
 }
@@ -21,7 +21,7 @@ h1, h2, h3, h4, h5 {
 	font-size: 80%;
 }
 .headerfooterline {
-	color: var(--hazelcast-orange);
+	color: var(--hazelcast-blue);
 }
 
 .major_pane {
@@ -45,6 +45,7 @@ h1, h2, h3, h4, h5 {
     border: 4px solid var(--hazelcast-blue-dark);
     background-color: black;
     color: white;
+    font-size: 12px;
 }
 
 .finos_pane {
