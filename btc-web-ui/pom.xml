@@ -107,6 +107,14 @@
                                                         <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                                                         <resources>
                                                                 <resource>
+                                                                        <directory>${frontend.app.dir}</directory>
+                                                                        <filtering>false</filtering>
+                                                                        <includes>
+                                                                        	<include>*.js</include>
+                                                                        	<include>*.wasm</include>
+                                                                        </includes>
+                                                                </resource>
+                                                                <resource>
                                                                         <directory>${frontend.app.dir}/static</directory>
                                                                         <filtering>true</filtering>
                                                                 </resource>

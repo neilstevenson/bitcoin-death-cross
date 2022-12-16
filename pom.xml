@@ -46,8 +46,8 @@
 		<my.docker.jar.file>${project.artifactId}.jar</my.docker.jar.file>
 
 		<!-- For WebUI -->		
-		<node.version>v19.2.0</node.version>
-		<npm.version>9.1.3</npm.version>
+		<node.version>v19.3.0</node.version>
+		<npm.version>9.2.0</npm.version>
 		<frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
 	</properties>
 
@@ -114,6 +114,12 @@
                                         <version>${maven-clean-plugin.version}</version>
                                         <configuration>
                                                 <filesets>
+                                                        <fileset>
+                                                                <directory>src/main/app</directory>
+                                                                <includes>
+                                                                	<include>*.wasm</include>
+                                                                </includes>
+                                                        </fileset>
                                                         <fileset>
                                                                 <directory>src/main/app/build</directory>
                                                         </fileset>

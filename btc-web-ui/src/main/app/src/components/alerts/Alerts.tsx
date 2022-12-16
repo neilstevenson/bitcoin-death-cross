@@ -101,7 +101,7 @@ function Table({ columns, data }) {
 }
 
 function toISO8601(longStr) {
-    var dateObj = new Date(Number(longStr));
+    let dateObj = new Date(Number(longStr));
     return dateObj.toISOString().replace('T',' ').split('.')[0];
 }
 
@@ -119,8 +119,8 @@ const columns = [
             accessor: 'pair',
         },
         {
-            Header: 'Trend',
-            accessor: 'trend',
+            Header: 'Action',
+            accessor: 'action',
         },
         {
             Header: '50 Point',
@@ -137,13 +137,21 @@ const Alerts: React.FunctionComponent = () => {
 
 	const handleData = (message) => {
 	    console.log("Alerts.tsx", "handleData()", message);
-		var nowStr = toISO8601(message.now);
+		let nowStr = toISO8601(message.now);
 
-    	var alert = {
+        let divClass = "buyColumn";
+		let action = "Buy"
+		if (message.trend === "Downward") {
+			action = "Sell"
+			divClass = "sellColumn"
+		}
+		let action_styled = <div className={divClass}>{action}</div>;
+		
+    	let alert = {
 			now: nowStr,
         	date: message.date,
         	pair: message.pair,
-        	trend: message.trend,
+        	action: action_styled,
         	average_50_Point: message.average_50_Point,
         	average_200_Point: message.average_200_Point
     	};

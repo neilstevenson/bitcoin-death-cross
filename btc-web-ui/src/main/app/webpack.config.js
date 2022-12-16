@@ -1,3 +1,4 @@
+const HtmlWebPackPlugin = require("html-webpack-plugin");
 const PerspectivePlugin = require("@finos/perspective-webpack-plugin");
 const path = require('path');
 
