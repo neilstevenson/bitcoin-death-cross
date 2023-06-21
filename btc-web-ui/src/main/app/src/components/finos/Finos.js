@@ -14,124 +14,130 @@
  * limitations under the License.
  */
 
-import * as React from "react";
+import React from 'react';
 import SockJsClient from 'react-stomp';
 import * as perspective from "@finos/perspective";
 import "@finos/perspective-viewer";
-//import PerspectiveViewerConfig from "@finos/perspective-viewer";
-import {
-    HTMLPerspectiveViewerElement,
-} from "@finos/perspective-viewer";
 import "@finos/perspective-viewer-datagrid";
+import "@finos/perspective-viewer-d3fc";
 
 const WS_URL = 'http://' + window.location.host + '/hazelcast';
 const WS_FEED_PREFIX = '/feed';
 const WS_DATA = [ WS_FEED_PREFIX + "/data" ];
 
-const worker = perspective.default.shared_worker();
-const config : any/*FIXME: PerspectiveViewerConfig*/ = {
-	//FIXME MOVE CONFIG TO HERE
+const WORKER = perspective.default.shared_worker();
+const CONFIG = {
+  plugin: "Datagrid",
+  plugin_config: {
+      columns: {
+          "(+)rate": { fg_gradient: 7.93, number_fg_mode: "bar" },
+          "(-)rate": { fg_gradient: 8.07, number_fg_mode: "bar" },
+          rate: { bg_gradient: 9.97, number_bg_mode: "gradient" },
+      },
+      editable: false,
+      scroll_lock: true,
+  },
+  settings: true,
+  theme: "Vaporwave",
+  group_by: ["pair"],
+  split_by: ["type"],
+  columns: ["(-)rate", "rate", "(+)rate"],
+  filter: [],
+  sort: [["rate", "desc"]],
+  expressions: [
+      '//(-)rate\nif("rate"<0){"rate"}else{0}',
+      '//(+)rate\nif("rate">0){"rate"}else{0}',
+  ],
+  aggregates: { "(-)rate": "avg", rate: "avg", "(+)rate": "avg" },
 };
+
+var TYPES = [
+  "Current",
+  "50_Point",
+  "200_Point"
+];
 
 function init() {
 	let rows = [];
-	rows.push({
-        	date: '2017-01-01',
-        	pair: 'BTCUSD',
-        	rate: 0.0,
-        	type: 'Current',
-	})
-    return rows;
+  for (var i = 0; i < TYPES.length; i++) {
+    rows.push({
+      date: '2017-01-01',
+      pair: 'BTCUSD',
+      rate: 0.0,
+      type: TYPES[i]
+    });
+  }
+  return rows;
 }
 
-const initTable = async (): Promise<perspective.Table> => {
-	return await worker.table(init());
-};
-//const updateTable = async (): Promise<perspective.Table> => {
-//	return await worker.table(newRows());
-//};
+const TABLE = await WORKER.table(init(), {
+  limit: 500,
+});
 
-const Finos = (): React.ReactElement => {
-    const viewer = React.useRef<HTMLPerspectiveViewerElement>(null);
-    let count = 0;
+let count = 0;
 
-	const handleData = (message: any) => {
-		if (count == 0) {
-		    console.log("Finos.tsx", "handleData()", "count==" + count, message);
-		    count++;
+class Finos extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+        this.handleData = this.handleData.bind(this);
+    }
+    	
+    handleData(message) {
+		if (count < 5) {
+		    console.log("Finos.js", "handleData()", "count==" + count, message);
 		}
-	    
+		count++;
+		
 		let row = {
         	date: message.date,
         	pair: message.pair,
         	rate: message.rate,
         	type: message.type,
-    	};
+    };
+    let rows = [];
+    rows.push(row);
 
-        //updateTable().then((table) => {
-		//	if (viewer.current) {
-		//		const t = Promise.resolve<perspective.Table>(table)
-		//		//XXX t.update(row)				
-		//	}
-        //})
-	}
-        
-    React.useEffect(() => {
-        initTable().then((table) => {
-            if (viewer.current) {
-				const t = Promise.resolve(table)
-				viewer.current.load(t)
-				viewer.current.restore(
-{
-  "plugin": "Datagrid",
-  "plugin_config": {
-    "columns": {
-      "rate": {
-        "gradient": 10,
-        "number_color_mode": "bar"
-      }
-    },
-    "editable": false,
-    "scroll_lock": true
-  },
-  "settings": true,
-  "group_by": [
-  ],
-  "split_by": [
-  ],
-  "columns": [
-    "date",
-    "pair",
-    "rate",
-    "type"
-  ],
-  "filter": [
-  ],
-  "sort": [
-  ],
-  "expressions": [
-  ],
-  "aggregates": {
+    try {
+      TABLE.update(rows);
+    } catch (e) {
+      console.log("Finos.js", "handleData()", row, e);
+    }
   }
-}
-				);
-				viewer.current.toggleConfig();
-            }
-        })
-    }, []);	
 	
-  return (
-        <div className="finosOuterBox">
-			<SockJsClient 
-            	url={WS_URL}
-                topics={WS_DATA}
-                onMessage={(message) => { handleData(message); }}
-                />
-        	<div className="finosInnerBox">
-    		  <perspective-viewer ref={viewer}/>
-        	</div> 
+  render() {	
+  	return (
+      <div className="finosOuterBox">
+			  <SockJsClient 
+          url={WS_URL}
+          topics={WS_DATA}
+          onMessage={this.handleData}
+        />
+        <div className="finosInnerBox">
+			    <perspective-viewer id="perspective"/>
+        </div> 
   		</div>
-  );	
+  	);
+  }	
+
+	async componentDidMount() {
+		console.log("Finos.js", "componentDidMount()");
+    let viewer = document.getElementById("perspective");
+    
+    try {
+      let table = await Promise.resolve(TABLE);
+      await viewer.load(TABLE);
+    } catch (e) {
+      console.log("Finos.js", "componentDidMount()", "viewer.load", e);
+    }
+    
+    try {
+      viewer.restore(CONFIG);
+    } catch (e) {
+      console.log("Finos.js", "componentDidMount()", "viewer.restore", e);
+    }
+  }
 };
 
-export default Finos;	
+export default Finos;
