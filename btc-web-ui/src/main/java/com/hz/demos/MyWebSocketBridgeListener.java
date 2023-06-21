@@ -86,7 +86,11 @@ public class MyWebSocketBridgeListener implements
 		String pair = key.getString(MyConstants.JSON_FIELD_PAIR);
 		String type = key.getString(MyConstants.JSON_FIELD_TYPE).replaceAll(" ", "_");
 		LocalDate date = LocalDate.parse(value.getString(MyConstants.JSON_FIELD_DATE));
-		BigDecimal rate =  value.getBigDecimal(MyConstants.JSON_FIELD_RATE);
+		String rate =  value.getBigDecimal(MyConstants.JSON_FIELD_RATE).toPlainString();
+		int point = rate.indexOf('.');
+		if (point > -1) {
+			rate = rate.substring(0, point);
+		}
 		
 		StringBuilder stringBuilder = new StringBuilder()
 				.append("{ \"").append(MyConstants.JSON_FIELD_NOW).append("\": \"").append(now).append("\"")

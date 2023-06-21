@@ -27,51 +27,33 @@ const WS_DATA = [ WS_FEED_PREFIX + "/data" ];
 
 const WORKER = perspective.default.shared_worker();
 const CONFIG = {
-  plugin: "Datagrid",
-  plugin_config: {
-      columns: {
-          "(+)rate": { fg_gradient: 7.93, number_fg_mode: "bar" },
-          "(-)rate": { fg_gradient: 8.07, number_fg_mode: "bar" },
-          rate: { bg_gradient: 9.97, number_bg_mode: "gradient" },
-      },
-      editable: false,
-      scroll_lock: true,
-  },
-  settings: true,
+  plugin: "X/Y Line",
+  plugin_config: {"legend":{"pageIndex":1}},
+  settings: false,
   theme: "Vaporwave",
-  group_by: ["pair"],
-  split_by: ["type"],
-  columns: ["(-)rate", "rate", "(+)rate"],
+  title: "BTC/USD",
+  group_by: [],
+  split_by: ["kind"],
+  columns: ["when","rate","kind"],
   filter: [],
-  sort: [["rate", "desc"]],
-  expressions: [
-      '//(-)rate\nif("rate"<0){"rate"}else{0}',
-      '//(+)rate\nif("rate">0){"rate"}else{0}',
-  ],
-  aggregates: { "(-)rate": "avg", rate: "avg", "(+)rate": "avg" },
+  sort: [["kind","desc"]],
+  expressions: [],
+  aggregates: {}
 };
-
-var TYPES = [
-  "Current",
-  "50_Point",
-  "200_Point"
-];
 
 function init() {
 	let rows = [];
-  for (var i = 0; i < TYPES.length; i++) {
-    rows.push({
-      date: '2017-01-01',
-      pair: 'BTCUSD',
-      rate: 0.0,
-      type: TYPES[i]
-    });
-  }
+  rows.push({
+    when: '2017-01-01',
+    rate: 995,
+    kind: 'Current'
+  });
   return rows;
 }
 
 const TABLE = await WORKER.table(init(), {
-  limit: 500,
+  // 10 years
+  limit: 3650,
 });
 
 let count = 0;
@@ -85,16 +67,15 @@ class Finos extends React.Component {
     }
     	
     handleData(message) {
-		if (count < 5) {
+		if (count < 50000) {
 		    console.log("Finos.js", "handleData()", "count==" + count, message);
 		}
 		count++;
 		
 		let row = {
-        	date: message.date,
-        	pair: message.pair,
+        	when: message.date,
         	rate: message.rate,
-        	type: message.type,
+        	kind: message.type,
     };
     let rows = [];
     rows.push(row);
