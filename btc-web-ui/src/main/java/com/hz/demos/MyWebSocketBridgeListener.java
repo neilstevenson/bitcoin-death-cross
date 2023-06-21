@@ -30,9 +30,10 @@ import com.hazelcast.jet.datamodel.Tuple2;
 import com.hazelcast.jet.datamodel.Tuple3;
 import com.hazelcast.map.listener.EntryAddedListener;
 import com.hazelcast.map.listener.EntryUpdatedListener;
-import com.hazelcast.org.json.JSONObject;
 import com.hazelcast.topic.Message;
 import com.hazelcast.topic.MessageListener;
+
+import org.json.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
 

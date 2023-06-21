@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import com.hazelcast.core.HazelcastJsonValue;
-import com.hazelcast.org.json.JSONObject;
+import org.json.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
 

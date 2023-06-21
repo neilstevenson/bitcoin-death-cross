@@ -9,19 +9,24 @@ body {
 	background: Black;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5 {
 	text-align: center;
 	color: var(--hazelcast-blue-light);
 }
 
+h6 {
+	text-align: center;
+	color: var(--hazelcast-orange);
+}
+
 .headerfooter {
 	text-align: center;
-	color: var(--hazelcast-blue);
+	color: var(--hazelcast-orange);
 	font-family: "Courier New", Courier, monospace;
 	font-size: 80%;
 }
 .headerfooterline {
-	color: var(--hazelcast-blue);
+	color: var(--hazelcast-orange);
 }
 
 .buyColumn {
@@ -45,7 +50,7 @@ h1, h2, h3, h4, h5, h6 {
 .alertsInnerBox {
     border: 1px solid Red;
 	border-style: dotted;
-	max-height: 200px;
+	max-height: 100px;
     overflow: scroll;       
 }
 .alertsOuterBox {
@@ -55,22 +60,34 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .finos_pane {
-    background-color: green;        
-    color: white;
-    max-height: 400px;
-    overflow: scroll;
-}
-.finosInnerBox {
-    background-color: white;        
     color: green;
 }
+
+.finosInnerBox {
+    height: auto;
+    top: 10px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+}
 .finosOuterBox {
+    background-color: white;        
     border: 4px solid var(--hazelcast-blue-dark);
+    height: 350px;
+    overflow: scroll;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
 }
 
+/* TODO: Fix sizing so not absolute */
 perspective-viewer {
-    position: relative;
-    left: 10px;
+    position: absolute; 
+    top: 155px; 
+    left: 22px; 
+    right: 22px; 
+    bottom: 262px; 
     border: 2px solid red;
 }
 

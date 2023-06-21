@@ -16,26 +16,24 @@
 
 'use strict';
 
-import React from "react";
-import { createRoot } from 'react-dom/client';
+import React, { Component } from 'react';
 import Alerts from "./components/alerts/Alerts";
 import Finos from "./components/finos/Finos";
 
-const alerts = React.createElement(Alerts)
-const finos = React.createElement(Finos)
+class App extends Component {
+        render() {
+                return (
+                                <div>
+                                        <div class="finos_pane">
+                                        	<Finos/>
+                                        </div>
+                                        <div class="pane_separator"/>
+                                        <div class="alerts_pane">
+                                        	<Alerts/>
+                                        </div>
+                                </div>
+                )
+        }
+}
 
-const App = (): React.ReactElement => {
-    return React.createElement(
-	    "div",
-	    null,
-	    React.createElement("div", "alerts_pane", alerts),
-	    React.createElement("hr", "pane_separator", null),
-	    React.createElement("div", "finos_pane", finos),
-	);
-};
-
-window.addEventListener("load", () => {
-	const rootContainer = document.getElementById('root');
-    const root = createRoot(rootContainer!);
-    root.render(<App />);
-});
+export default App;

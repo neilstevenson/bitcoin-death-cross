@@ -6,16 +6,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.1.0</version>
 	</parent>
 
 	<groupId>com.hz.demos</groupId>
 	<artifactId>btc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+	<packaging>pom</packaging>
 
 	<modules>
+		<!--
 		<module>btc-clusterside</module>
+		-->
 		<module>btc-common</module>
 		<module>btc-data-feed</module>
 		<module>btc-jobs</module>
@@ -23,31 +25,35 @@
 	</modules>
 
 	<properties>
-		<docker-maven-plugin.version>0.40.2</docker-maven-plugin.version>
-		<hazelcast-cloud-maven-plugin.version>0.0.5</hazelcast-cloud-maven-plugin.version>
-		<maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
+		<docker-maven-plugin.version>0.43.0</docker-maven-plugin.version>
+		<hazelcast-cloud-maven-plugin.version>0.0.6</hazelcast-cloud-maven-plugin.version>
+		<maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+		<maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
+		<plexus-utils.version>3.5.0</plexus-utils.version>
 
-		<!-- Match Viridian -->
-		<hazelcast.version>5.1.5</hazelcast.version>
+		<!-- Match Viridian on major/minior version -->
+		<hazelcast.version>5.2.3</hazelcast.version>
 		<java.version>11</java.version>
-		
+
+		<json.version>20230618</json.version>
+
 		<!-- From ~/.m2/settings.xml -->
 		<viridian.api.key>${my.viridian.api.key}</viridian.api.key>
 		<viridian.api.secret>${my.viridian.api.secret}</viridian.api.secret>
-		<viridian.cluster.name>${my.viridian.cluster1.name}</viridian.cluster.name>
-		<viridian.cluster.discovery.token>${my.viridian.cluster1.discovery.token}</viridian.cluster.discovery.token>
+		<viridian.cluster.id>${my.viridian.cluster1.id}</viridian.cluster.id>
+		<viridian.cluster.discovery.token>
+			${my.viridian.cluster1.discovery.token}</viridian.cluster.discovery.token>
 		<viridian.cluster.keys.location>${my.viridian.cluster1.keys.location}</viridian.cluster.keys.location>
-		<viridian.cluster.keys.keystore.password>${my.viridian.cluster1.keys.keystore.password}</viridian.cluster.keys.keystore.password>
-		<viridian.cluster.keys.truststore.password>${my.viridian.cluster1.keys.truststore.password}</viridian.cluster.keys.truststore.password>
-		
+		<viridian.cluster.key.password>${my.viridian.cluster1.key.password}</viridian.cluster.key.password>
+
 		<!-- For Docker image -->
 		<my.docker.image.hlq>${user.name}</my.docker.image.hlq>
 		<my.docker.image.name>${project.artifactId}</my.docker.image.name>
 		<my.docker.jar.file>${project.artifactId}.jar</my.docker.jar.file>
 
-		<!-- For WebUI -->		
-		<node.version>v19.3.0</node.version>
-		<npm.version>9.2.0</npm.version>
+		<!-- For WebUI -->
+		<node.version>v20.3.0</node.version>
+		<npm.version>9.7.1</npm.version>
 		<frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
 	</properties>
 
@@ -70,7 +76,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -81,13 +93,24 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>${json.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -97,100 +120,117 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
-            <resource>
-            	<directory>${viridian.cluster.keys.location}</directory>
-            	<filtering>false</filtering>
-            	<includes>
-            		<include>client.keystore</include>
-            		<include>client.truststore</include>
-            	</includes>
-            </resource>
+			<resource>
+				<directory>${viridian.cluster.keys.location}</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>client.keystore</include>
+					<include>client.truststore</include>
+				</includes>
+			</resource>
 		</resources>
-		
+
 		<pluginManagement>
 			<plugins>
-                                <plugin>
-                                        <artifactId>maven-clean-plugin</artifactId>
-                                        <version>${maven-clean-plugin.version}</version>
-                                        <configuration>
-                                                <filesets>
-                                                        <fileset>
-                                                                <directory>src/main/app</directory>
-                                                                <includes>
-                                                                	<include>*.wasm</include>
-                                                                </includes>
-                                                        </fileset>
-                                                        <fileset>
-                                                                <directory>src/main/app/build</directory>
-                                                        </fileset>
-                                                        <fileset>
-                                                                <directory>src/main/app/node_modules</directory>
-                                                        </fileset>
-                                                        <fileset>
-                                                                <directory>src/main/app/static</directory>
-                                                        </fileset>
-                                                </filesets>
-                                        </configuration>
-                                </plugin>
-			    <plugin>
-        			<groupId>com.github.eirslett</groupId>
-		            <artifactId>frontend-maven-plugin</artifactId>
-		            <version>${frontend-maven-plugin.version}</version>
-        		</plugin>
-			    <plugin>
-                    <groupId>com.hazelcast.cloud</groupId>
-                    <artifactId>hazelcast-cloud-maven-plugin</artifactId>
-                    <version>${hazelcast-cloud-maven-plugin.version}</version>
-            		<configuration>
-                		<apiBaseUrl>https://api.viridian.hazelcast.com</apiBaseUrl>
-                		<clusterName>${viridian.cluster.name}</clusterName>
-                		<apiKey>${viridian.api.key}</apiKey>
-                		<apiSecret>${viridian.api.secret}</apiSecret>
-            		</configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <id>default</id>
-                            <goals>
-                                <goal>deploy</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-        		</plugin>
+				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${maven-clean-plugin.version}</version>
+					<configuration>
+						<filesets>
+							<fileset>
+								<directory>src/main/app</directory>
+								<includes>
+									<include>*.wasm</include>
+									<include>package-lock.json</include>
+									<include>perspective-worker.js</include>
+								</includes>
+							</fileset>
+							<fileset>
+								<directory>src/main/app/build</directory>
+							</fileset>
+							<fileset>
+								<directory>src/main/app/node_modules</directory>
+							</fileset>
+							<fileset>
+								<directory>src/main/app/static</directory>
+							</fileset>
+							<fileset>
+								<directory>src/main/resources</directory>
+								<includes>
+									<include>bin</include>
+									<include>obj</include>
+								</includes>
+							</fileset>
+						</filesets>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.eirslett</groupId>
+					<artifactId>frontend-maven-plugin</artifactId>
+					<version>${frontend-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.hazelcast.cloud</groupId>
+					<artifactId>hazelcast-cloud-maven-plugin</artifactId>
+					<version>${hazelcast-cloud-maven-plugin.version}</version>
+					<configuration>
+						<apiBaseUrl>https://api.viridian.hazelcast.com</apiBaseUrl>
+						<clusterName>${viridian.cluster.id}</clusterName>
+						<apiKey>${viridian.api.key}</apiKey>
+						<apiSecret>${viridian.api.secret}</apiSecret>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.codehaus.plexus</groupId>
+							<artifactId>plexus-utils</artifactId>
+							<version>${plexus-utils.version}</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<id>default</id>
+							<goals>
+								<goal>deploy</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 				<plugin>
 					<groupId>io.fabric8</groupId>
-                	<artifactId>docker-maven-plugin</artifactId>
-                    <version>${docker-maven-plugin.version}</version>
-                    <configuration>
-                        <imagePullPolicy>IFNOTPRESENT</imagePullPolicy>
-                        <images>
-                            <image>
-                            	<build>
-                            		<args>
-                            			<JAR_FILE>${my.docker.jar.file}</JAR_FILE>
-                            		</args>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${docker-maven-plugin.version}</version>
+					<configuration>
+						<imagePullPolicy>IFNOTPRESENT</imagePullPolicy>
+						<images>
+							<image>
+								<build>
+									<args>
+										<JAR_FILE>${my.docker.jar.file}</JAR_FILE>
+									</args>
 									<buildx>
-                                    	<platforms>
-                                            <platform>linux/arm64</platform>
-                                        	<platform>linux/x86_64</platform>
-                                        </platforms>
-                                    </buildx>
-                                    <dockerFile>${project.basedir}/Dockerfile</dockerFile>
-                            	</build>
-                                <name>${my.docker.image.hlq}/${my.docker.image.name}</name>
-                            </image>
-                        </images>
-                        <verbose>true</verbose>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <id>default</id>
-                            <goals>
-                                <goal>build</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+										<platforms>
+											<platform>linux/arm64</platform>
+											<platform>linux/x86_64</platform>
+										</platforms>
+									</buildx>
+									<dockerFile>${project.basedir}/Dockerfile</dockerFile>
+								</build>
+								<name>
+									${my.docker.image.hlq}/${my.docker.image.name}</name>
+							</image>
+						</images>
+						<verbose>true</verbose>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<id>default</id>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

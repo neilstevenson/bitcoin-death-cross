@@ -18,6 +18,8 @@ package com.hz.demos;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +39,7 @@ import com.hazelcast.core.HazelcastInstance;
 @Configuration
 @Order(value = 1)
 public class ApplicationRunner1 implements CommandLineRunner {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner1.class);
 
 	@Autowired
 	private HazelcastInstance hazelcastInstance;
@@ -49,7 +52,15 @@ public class ApplicationRunner1 implements CommandLineRunner {
 		
         MapConfig priceFeedMapConfig = new MapConfig(MyConstants.IMAP_PRICE_FEED);
         priceFeedMapConfig.setEventJournalConfig(eventJournalConfig);
-        this.hazelcastInstance.getConfig().addMapConfig(priceFeedMapConfig);
+        try {
+        	// So can run twice safely
+        	this.hazelcastInstance.getConfig().addMapConfig(priceFeedMapConfig);
+            LOGGER.info("Added '{}'", priceFeedMapConfig);
+        } catch (Exception e) {
+        	String message = String.format("Error adding map config for '%s'",
+        			priceFeedMapConfig.getName());
+        	LOGGER.error(message, e);
+        }
 
         // Define what we may query
 		this.addMappings();

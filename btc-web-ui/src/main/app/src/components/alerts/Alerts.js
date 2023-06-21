@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React, {useState} from "react";
+import React, { Component } from 'react';
 import SockJsClient from 'react-stomp';
 import {useTable} from 'react-table';
 import styled from 'styled-components';
+import update from 'immutability-helper';
 
 const WS_URL = 'http://' + window.location.host + '/hazelcast';
 const WS_FEED_PREFIX = '/feed';
@@ -37,7 +38,7 @@ const Styles = styled.div `
       }
     }
     th {
-          color: indigo;
+          color: beige;
           font-size: 12px;
       margin: 0;
       padding: 0.5rem;
@@ -132,11 +133,17 @@ const columns = [
         },
 ]
 
-const Alerts: React.FunctionComponent = () => {
-	const [statealerts, setStatealerts] = useState([]);
-
-	const handleData = (message) => {
-	    console.log("Alerts.tsx", "handleData()", message);
+class Alerts extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+                alerts: []
+        };
+        this.handleData = this.handleData.bind(this);
+    }
+    	
+    handleData(message) {
+		console.log("Alerts.js", "handleData()", message);
 		let nowStr = toISO8601(message.now);
 
         let divClass = "buyColumn";
@@ -155,28 +162,37 @@ const Alerts: React.FunctionComponent = () => {
         	average_50_Point: message.average_50_Point,
         	average_200_Point: message.average_200_Point
     	};
-    	if (statealerts.length == 0) {
-			setStatealerts([alert])
-		} else {
-			setStatealerts([alert, ...statealerts])
-		}
+
+        // Prepend
+        var alerts = this.state.alerts;
+        if (alerts.length == 0) {
+            this.setState({
+                alerts: update(this.state.alerts, {$push: [alert]}) 
+            })
+        } else {
+            this.setState({
+                alerts: [alert, ...this.state.alerts] 
+                        })
+        }
     };
-	
-  return (
+    
+    render() {	
+  	  return (
         <div className="alertsOuterBox">
 			<SockJsClient 
             	url={WS_URL}
                 topics={WS_ALERTS}
-                onMessage={(message) => { handleData(message); }}
+                onMessage={this.handleData}
                 />
             <h6>Alerts</h6>
         	<div className="alertsInnerBox">
     			<Styles>
-                    <Table columns={columns} data={statealerts} />
+                    <Table columns={columns} data={this.state.alerts} />
 	            </Styles>
         	</div> 
   		</div>
-  );	
+  		);
+  	}	
 };
 
 export default Alerts;	
