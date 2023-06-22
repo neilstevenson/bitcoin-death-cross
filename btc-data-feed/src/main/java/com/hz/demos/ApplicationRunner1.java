@@ -57,9 +57,9 @@ public class ApplicationRunner1 implements CommandLineRunner {
         	this.hazelcastInstance.getConfig().addMapConfig(priceFeedMapConfig);
             LOGGER.info("Added '{}'", priceFeedMapConfig);
         } catch (Exception e) {
-        	String message = String.format("Error adding map config for '%s'",
-        			priceFeedMapConfig.getName());
-        	LOGGER.error(message, e);
+        	String message = String.format("Error adding map config for '%s': %s",
+        			priceFeedMapConfig.getName(), e.getMessage());
+        	LOGGER.error(message);
         }
 
         // Define what we may query
