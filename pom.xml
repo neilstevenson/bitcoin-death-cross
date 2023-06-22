@@ -15,9 +15,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<!--
 		<module>btc-clusterside</module>
-		-->
 		<module>btc-common</module>
 		<module>btc-data-feed</module>
 		<module>btc-jobs</module>
