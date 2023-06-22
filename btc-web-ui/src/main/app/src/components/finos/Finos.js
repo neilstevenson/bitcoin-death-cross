@@ -28,15 +28,15 @@ const WS_DATA = [ WS_FEED_PREFIX + "/data" ];
 const WORKER = perspective.default.shared_worker();
 const CONFIG = {
   plugin: "X/Y Line",
-  plugin_config: {"legend":{"pageIndex":1}},
+  plugin_config: {},
   settings: false,
   theme: "Vaporwave",
   title: "BTC/USD",
   group_by: [],
-  split_by: ["kind"],
-  columns: ["when","rate","kind"],
+  split_by: ["type"],
+  columns: ["date","rate","type"],
   filter: [],
-  sort: [["kind","desc"]],
+  sort: [],
   expressions: [],
   aggregates: {}
 };
@@ -44,16 +44,15 @@ const CONFIG = {
 function init() {
 	let rows = [];
   rows.push({
-    when: '2017-01-01',
+    date: '2017-01-01',
     rate: 995,
-    kind: 'Current'
+    type: 'Current'
   });
   return rows;
 }
 
 const TABLE = await WORKER.table(init(), {
-  // 10 years
-  limit: 3650,
+  limit: 50000,
 });
 
 let count = 0;
@@ -73,9 +72,9 @@ class Finos extends React.Component {
 		count++;
 		
 		let row = {
-        	when: message.date,
+        	date: message.date,
         	rate: message.rate,
-        	kind: message.type,
+        	type: message.type,
     };
     let rows = [];
     rows.push(row);

@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.jet.Job;
@@ -86,8 +85,11 @@ public class ApplicationRunner {
 	private void launchMovingAverage() {
 		Pipeline pipeline = MovingAverage.build();
 		JobConfig jobConfig = new JobConfig();
-		jobConfig.setName(MovingAverage.class.getSimpleName());
+		jobConfig.setName(MovingAverage.class.getSimpleName()
+				+ System.currentTimeMillis()//FIXME temp name so can resubmit for faster testing, but duplicate alerts
+				);
 		jobConfig.addPackage(MovingAverage.class.getPackageName());
+		jobConfig.setMetricsEnabled(true);
 		
 		this.checkedSubmit(pipeline, jobConfig);
 	}
