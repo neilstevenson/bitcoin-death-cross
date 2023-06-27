@@ -6,6 +6,7 @@ target/
 .factorypath
 .project
 .surefire-*
+.vscode
 .DS_Store
 *.iml
 *.ipr
