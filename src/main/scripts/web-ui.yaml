@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: btc-web-ui
+spec:
+  selector:
+    app: btc-web-ui
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: btc-web-ui
+spec:
+  selector:
+    matchLabels:
+      app: btc-web-ui
+  template:
+    metadata:
+      labels:
+        app: btc-web-ui
+    spec:
+      containers:
+        - image: "europe-west1-docker.pkg.dev/hazelcast-33/nstevenson/btc-web-ui"
+          imagePullPolicy: Always
+          name: btc-web-ui-container

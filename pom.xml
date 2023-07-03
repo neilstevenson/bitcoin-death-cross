@@ -24,10 +24,10 @@
 
 	<properties>
 		<docker-maven-plugin.version>0.43.0</docker-maven-plugin.version>
-		<hazelcast-cloud-maven-plugin.version>0.0.6</hazelcast-cloud-maven-plugin.version>
+		<hazelcast-cloud-maven-plugin.version>0.0.7</hazelcast-cloud-maven-plugin.version>
 		<maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
 		<maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
-		<plexus-utils.version>3.5.0</plexus-utils.version>
+		<plexus-utils.version>4.0.0</plexus-utils.version>
 
 		<!-- Match Viridian on major/minior version -->
 		<hazelcast.version>5.2.3</hazelcast.version>

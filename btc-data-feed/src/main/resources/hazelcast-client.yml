@@ -18,9 +18,6 @@ hazelcast-client:
     hazelcast-cloud:
       enabled: true
       discovery-token: '@viridian.cluster.discovery.token@'
-    #
-    auto-detection:
-      enabled: false
   #
   connection-strategy:
     reconnect-mode: OFF

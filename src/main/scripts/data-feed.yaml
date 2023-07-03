@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: btc-job-data-feed
+  name: btc-job-data-feed
+spec:
+  template:
+    metadata:
+      labels:
+        app: btc-job-data-feed
+    spec:
+      containers:
+        - image: "europe-west1-docker.pkg.dev/hazelcast-33/nstevenson/btc-data-feed"
+          imagePullPolicy: Always
+          name: btc-job-data-feed-container
+      restartPolicy: Never

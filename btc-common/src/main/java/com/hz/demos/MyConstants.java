@@ -50,7 +50,7 @@ public class MyConstants {
 	public static final String JSON_FIELD_2000_POINT = "average_" + TYPE_200_POINT.replaceAll(" ", "_");
 
 	// How frequently to write prices, in milliseconds
-	public static final long DATA_FEED_WRITE_INTERVAL_MS = 100L;
+	public static final long DATA_FEED_WRITE_INTERVAL_MS = 10L;
 	
 	// For diagnostics, log every n-th item
 	public static final int LOG_EVERY = 100;
